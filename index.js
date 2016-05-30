@@ -68,7 +68,8 @@ Model.PROPERTIES_THAT_COULD_AFFECT_PRICE = {
   'GovernmentDetails.PartnerPreviousFundDetails.PreviouslyHadHealthInsurance':      true,
   'GovernmentDetails.ApplyGovernmentRebate':                                        true,
   'GovernmentDetails.IncomeTier':                                                   true,
-  'FinancialDetails.PaymentFrequency':                                              true
+  'FinancialDetails.PaymentFrequency':                                              true,
+  'FinancialDetails.PaymentMethod':                                                 true
 };
 
 /**
@@ -549,4 +550,3 @@ Model.prototype.setFrequency = function(frequency) {
 };
 
 module.exports = Model;
-
