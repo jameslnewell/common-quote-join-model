@@ -60,16 +60,20 @@ observable(Model.prototype);
  * @type {Object}
  */
 Model.PROPERTIES_THAT_COULD_AFFECT_PRICE = {
-  'PersonalDetails.PolicyHolder.DateOfBirth':                                       true,
-  'PersonalDetails.Partner.DateOfBirth':                                            true,
-  'ContactDetails.Address':                                                         true,
-  'ContactDetails.Address.State':                                                   true,
-  'GovernmentDetails.PolicyHolderPreviousFundDetails.PreviouslyHadHealthInsurance': true,
-  'GovernmentDetails.PartnerPreviousFundDetails.PreviouslyHadHealthInsurance':      true,
-  'GovernmentDetails.ApplyGovernmentRebate':                                        true,
-  'GovernmentDetails.IncomeTier':                                                   true,
-  'FinancialDetails.PaymentFrequency':                                              true,
-  'FinancialDetails.PaymentMethod':                                                 true
+  'PersonalDetails.PolicyHolder.DateOfBirth':                                                    true,
+  'PersonalDetails.Partner.DateOfBirth':                                                         true,
+  'ContactDetails.Address':                                                                      true,
+  'ContactDetails.Address.State':                                                                true,
+  'GovernmentDetails.PolicyHolderPreviousFundDetails.PreviouslyHadHealthInsurance':              true,
+  'GovernmentDetails.PartnerPreviousFundDetails.PreviouslyHadHealthInsurance':                   true,
+  'GovernmentDetails.ApplyGovernmentRebate':                                                     true,
+  'GovernmentDetails.IncomeTier':                                                                true,
+  'FinancialDetails.PaymentFrequency':                                                           true,
+  'FinancialDetails.PaymentMethod':                                                              true,
+  'GovernmentDetails.GovernmentRebateAcknowledgement.AreYouCoveredByThisPolicy':                 true,
+  'GovernmentDetails.GovernmentRebateAcknowledgement.AreAllPeopleOnPolicyEntitledToMedicare':    true,
+  'GovernmentDetails.GovernmentRebateAcknowledgement.DeclarationAllDetailsCorrect':              true,
+  'GovernmentDetails.GovernmentRebateAcknowledgement.RebateIsRequested':                         true
 };
 
 /**
