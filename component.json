@@ -3,7 +3,7 @@
   "scripts": ["index.js"],
   "dependencies": {
     "jkroso/equals": "0.3.6",
-    "moment/moment": "~2.8.0",
+    "moment/moment": "~2.22.0",
     "nib-components/observable": "~1.0.2",
     "nib-components/aus-gov-rebate": "~0.1.2"
   },
