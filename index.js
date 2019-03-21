@@ -1,7 +1,7 @@
-var moment      = require('moment');
-var equals      = require('equals');
-var observable  = require('observable');
-var AGR         = require('aus-gov-rebate');
+var moment = require("moment");
+var equals = require("equals");
+var observable = require("observable");
+var AGR = require("aus-gov-rebate");
 
 /**
  * A model
@@ -13,13 +13,13 @@ var AGR         = require('aus-gov-rebate');
  * @param   {Object} [options.preBundledExtrasProducts]
  */
 function Model(options) {
-  var self  = this;
-  options   = options || {};
+  var self = this;
+  options = options || {};
 
   this.AGR = AGR(options.agr);
   this.LHC = options.lhc;
 
-  this.set(options.attributes || {}, {silent: true});
+  this.set(options.attributes || {}, { silent: true });
 
   //set the model metadata
   if (options && options.preBundledExtrasProducts) {
@@ -27,31 +27,28 @@ function Model(options) {
   }
 
   //update the gender when the title changes
-  this.on('change:PersonalDetails.PolicyHolder.Title', this.defaultPolicyHolderGender);
-  this.on('change:PersonalDetails.Partner.Title', this.defaultPartnerHolderGender);
+  this.on("change:PersonalDetails.PolicyHolder.Title", this.defaultPolicyHolderGender);
+  this.on("change:PersonalDetails.Partner.Title", this.defaultPartnerHolderGender);
 
   //emit generic events to listen for data that may be mapped to multiple values
-  this
-    .on('change:PersonalDetails.Scale', function(value) {
-      self.emit('change:Scale', value);
+  this.on("change:PersonalDetails.Scale", function(value) {
+    self.emit("change:Scale", value);
+  })
+    .on("change:ContactDetails.Address.State", function(value) {
+      self.emit("change:State", value);
     })
-    .on('change:ContactDetails.Address.State', function(value) {
-      self.emit('change:State', value);
+    .on("change:FinancialDetails.PaymentFrequency", function(value) {
+      self.emit("change:PaymentFrequency", value);
     })
-    .on('change:FinancialDetails.PaymentFrequency', function(value) {
-      self.emit('change:PaymentFrequency', value);
+    .on("change:ProductSelection.Hospital.Excess", function(value) {
+      self.emit("change:Excess", value);
     })
-    .on('change:ProductSelection.Hospital.Excess', function(value) {
-      self.emit('change:Excess', value);
+    .on("change:ProductSelection.Hospital.Code", function(value) {
+      self.emit("change:HospitalCode", value);
     })
-    .on('change:ProductSelection.Hospital.Code', function(value) {
-      self.emit('change:HospitalCode', value);
-    })
-    .on('change:ProductSelection.Extras', function(value) {
-      self.emit('change:ExtrasCode', value);
-    })
-  ;
-
+    .on("change:ProductSelection.Extras", function(value) {
+      self.emit("change:ExtrasCode", value);
+    });
 }
 observable(Model.prototype);
 
@@ -60,20 +57,20 @@ observable(Model.prototype);
  * @type {Object}
  */
 Model.PROPERTIES_THAT_COULD_AFFECT_PRICE = {
-  'PersonalDetails.PolicyHolder.DateOfBirth':                                                    true,
-  'PersonalDetails.Partner.DateOfBirth':                                                         true,
-  'ContactDetails.Address':                                                                      true,
-  'ContactDetails.Address.State':                                                                true,
-  'GovernmentDetails.PolicyHolderPreviousFundDetails.PreviouslyHadHealthInsurance':              true,
-  'GovernmentDetails.PartnerPreviousFundDetails.PreviouslyHadHealthInsurance':                   true,
-  'GovernmentDetails.ApplyGovernmentRebate':                                                     true,
-  'GovernmentDetails.IncomeTier':                                                                true,
-  'FinancialDetails.PaymentFrequency':                                                           true,
-  'FinancialDetails.PaymentMethod':                                                              true,
-  'GovernmentDetails.GovernmentRebateAcknowledgement.AreYouCoveredByThisPolicy':                 true,
-  'GovernmentDetails.GovernmentRebateAcknowledgement.AreAllPeopleOnPolicyEntitledToMedicare':    true,
-  'GovernmentDetails.GovernmentRebateAcknowledgement.DeclarationAllDetailsCorrect':              true,
-  'GovernmentDetails.GovernmentRebateAcknowledgement.RebateIsRequested':                         true
+  "PersonalDetails.PolicyHolder.DateOfBirth": true,
+  "PersonalDetails.Partner.DateOfBirth": true,
+  "ContactDetails.Address": true,
+  "ContactDetails.Address.State": true,
+  "GovernmentDetails.PolicyHolderPreviousFundDetails.PreviouslyHadHealthInsurance": true,
+  "GovernmentDetails.PartnerPreviousFundDetails.PreviouslyHadHealthInsurance": true,
+  "GovernmentDetails.ApplyGovernmentRebate": true,
+  "GovernmentDetails.IncomeTier": true,
+  "FinancialDetails.PaymentFrequency": true,
+  "FinancialDetails.PaymentMethod": true,
+  "GovernmentDetails.GovernmentRebateAcknowledgement.AreYouCoveredByThisPolicy": true,
+  "GovernmentDetails.GovernmentRebateAcknowledgement.AreAllPeopleOnPolicyEntitledToMedicare": true,
+  "GovernmentDetails.GovernmentRebateAcknowledgement.DeclarationAllDetailsCorrect": true,
+  "GovernmentDetails.GovernmentRebateAcknowledgement.RebateIsRequested": true
 };
 
 /**
@@ -91,85 +88,57 @@ Model.couldPropertyAffectPrice = function(property) {
 
 /* === Scale codes === */
 
-Model.SCALE_SINGLE                = 'Single';
-Model.SCALE_COUPLE                = 'Couple';
-Model.SCALE_FAMILY                = 'Family';
-Model.SCALE_SINGLE_PARENT_FAMILY  = 'SingleParentFamily';
+Model.SCALE_SINGLE = "Single";
+Model.SCALE_COUPLE = "Couple";
+Model.SCALE_FAMILY = "Family";
+Model.SCALE_SINGLE_PARENT_FAMILY = "SingleParentFamily";
 
-Model.SCALE = [
-  Model.SCALE_SINGLE,
-  Model.SCALE_COUPLE,
-  Model.SCALE_FAMILY,
-  Model.SCALE_SINGLE_PARENT_FAMILY
-];
+Model.SCALE = [Model.SCALE_SINGLE, Model.SCALE_COUPLE, Model.SCALE_FAMILY, Model.SCALE_SINGLE_PARENT_FAMILY];
 
 /* === Hospital codes === */
 
-Model.HOSPITAL_NONE               = 'None';
-Model.HOSPITAL_BASIC              = 'BASIC';
-Model.HOSPITAL_MID                = 'MID';
-Model.HOSPITAL_TOP                = 'TOP_NO_OBS';
-Model.HOSPITAL_TOP_WITH_PREGNANCY = 'TOP_WITH_OBS';
+Model.HOSPITAL_NONE = "None";
+Model.HOSPITAL_BASIC = "BASIC";
+Model.HOSPITAL_MID = "MID";
+Model.HOSPITAL_TOP = "TOP_NO_OBS";
+Model.HOSPITAL_TOP_WITH_PREGNANCY = "TOP_WITH_OBS";
 
-Model.HOSPITAL = [
-  Model.HOSPITAL_NONE,
-  Model.HOSPITAL_BASIC,
-  Model.HOSPITAL_MID,
-  Model.HOSPITAL_TOP,
-  Model.HOSPITAL_TOP_WITH_PREGNANCY
-];
+Model.HOSPITAL = [Model.HOSPITAL_NONE, Model.HOSPITAL_BASIC, Model.HOSPITAL_MID, Model.HOSPITAL_TOP, Model.HOSPITAL_TOP_WITH_PREGNANCY];
 
 /* === Extras codes === */
 
-Model.EXTRAS_NONE                 = 'None';
-Model.EXTRAS_CORE                 = 'Core';
-Model.EXTRAS_CORE_PLUS            = 'CorePlus';
-Model.EXTRAS_TOP                  = 'Top';
-Model.EXTRAS_WELLBEING            = 'Wellbeing';
-Model.EXTRAS_BUNDLED              = 'Bundles';
+Model.EXTRAS_NONE = "None";
+Model.EXTRAS_CORE = "Core";
+Model.EXTRAS_CORE_PLUS = "CorePlus";
+Model.EXTRAS_TOP = "Top";
+Model.EXTRAS_WELLBEING = "Wellbeing";
+Model.EXTRAS_BUNDLED = "Bundles";
 
-Model.EXTRAS = [
-  Model.EXTRAS_NONE,
-  Model.EXTRAS_CORE,
-  Model.EXTRAS_CORE_PLUS,
-  Model.EXTRAS_TOP,
-  Model.EXTRAS_WELLBEING
-];
+Model.EXTRAS = [Model.EXTRAS_NONE, Model.EXTRAS_CORE, Model.EXTRAS_CORE_PLUS, Model.EXTRAS_TOP, Model.EXTRAS_WELLBEING];
 
 /* === Combined codes === */
 
-Model.COMBINED_NONE               = 'None';
-Model.COMBINED_KICKSTARTER        = 'Kickstarter';
-Model.COMBINED_KICKSTARTERPLUS    = 'KickstarterPlus';
+Model.COMBINED_NONE = "None";
+Model.COMBINED_KICKSTARTER = "Kickstarter";
+Model.COMBINED_KICKSTARTERPLUS = "KickstarterPlus";
 
-Model.COMBINED = [
-  Model.COMBINED_NONE,
-  Model.COMBINED_KICKSTARTER,
-  Model.COMBINED_KICKSTARTERPLUS
-];
+Model.COMBINED = [Model.COMBINED_NONE, Model.COMBINED_KICKSTARTER, Model.COMBINED_KICKSTARTERPLUS];
 
 /* === Frequency codes === */
 
-Model.FREQUENCY_FORTNIGHTLY     = 'Fortnightly';
-Model.FREQUENCY_HALFYEARLY      = 'HalfYearly';
-Model.FREQUENCY_MONTHLY         = 'Monthly';
-Model.FREQUENCY_QUARTERLY       = 'Quarterly';
-Model.FREQUENCY_WEEKLY          = 'Weekly';
-Model.FREQUENCY_YEARLY          = 'Yearly';
+Model.FREQUENCY_FORTNIGHTLY = "Fortnightly";
+Model.FREQUENCY_HALFYEARLY = "HalfYearly";
+Model.FREQUENCY_MONTHLY = "Monthly";
+Model.FREQUENCY_QUARTERLY = "Quarterly";
+Model.FREQUENCY_WEEKLY = "Weekly";
+Model.FREQUENCY_YEARLY = "Yearly";
 
-Model.FREQUENCY = [
-  Model.FREQUENCY_FORTNIGHTLY,
-  Model.FREQUENCY_HALFYEARLY,
-  Model.FREQUENCY_MONTHLY,
-  Model.FREQUENCY_QUARTERLY,
-  Model.FREQUENCY_WEEKLY,
-  Model.FREQUENCY_YEARLY
-];
+Model.FREQUENCY = [Model.FREQUENCY_FORTNIGHTLY, Model.FREQUENCY_HALFYEARLY, Model.FREQUENCY_MONTHLY, Model.FREQUENCY_QUARTERLY, Model.FREQUENCY_WEEKLY, Model.FREQUENCY_YEARLY];
 
 //copy the static constants to the prototype for accessibility
 for (var key in Model) {
   if (Model.hasOwnProperty(key)) {
-    if (key.indexOf('HOSPITAL') === 0 || key.indexOf('EXTRAS') === 0 || key.indexOf('SCALE') === 0) {
+    if (key.indexOf("HOSPITAL") === 0 || key.indexOf("EXTRAS") === 0 || key.indexOf("SCALE") === 0) {
       Model.prototype[key] = Model[key];
     }
   }
@@ -181,17 +150,14 @@ for (var key in Model) {
  * @returns {Stirng}
  */
 Model.getGenderFromTitle = function(value) {
-
   switch (value) {
+    case "Mr":
+      return "Male";
 
-    case 'Mr':
-      return 'Male';
-
-    case 'Miss':
-    case 'Mrs':
-    case 'Ms':
-      return 'Female';
-
+    case "Miss":
+    case "Mrs":
+    case "Ms":
+      return "Female";
   }
 
   return null;
@@ -202,7 +168,7 @@ Model.getGenderFromTitle = function(value) {
  * @returns {string}
  */
 Model.prototype.getScale = function() {
-  return this.get('PersonalDetails.Scale');
+  return this.get("PersonalDetails.Scale");
 };
 
 /**
@@ -210,13 +176,12 @@ Model.prototype.getScale = function() {
  * @returns {string}
  */
 Model.prototype.setScale = function(scale) {
-
   //check the code is valid
   if (Model.SCALE.indexOf(scale) === -1) {
-    throw new Error('Invalid scale "'+scale+'".');
+    throw new Error('Invalid scale "' + scale + '".');
   }
 
-  this.set('PersonalDetails.Scale', scale);
+  this.set("PersonalDetails.Scale", scale);
   return this;
 };
 
@@ -225,7 +190,7 @@ Model.prototype.setScale = function(scale) {
  * @returns {string}
  */
 Model.prototype.getState = function() {
-  return this.get('ContactDetails.Address.State');
+  return this.get("ContactDetails.Address.State");
 };
 
 /**
@@ -233,7 +198,7 @@ Model.prototype.getState = function() {
  * @returns {string}
  */
 Model.prototype.setState = function(state) {
-  this.set('ContactDetails.Address.State', state);
+  this.set("ContactDetails.Address.State", state);
   return this;
 };
 
@@ -242,7 +207,7 @@ Model.prototype.setState = function(state) {
  * @returns {string}
  */
 Model.prototype.getPaymentFrequency = function() {
-  return this.get('FinancialDetails.PaymentFrequency');
+  return this.get("FinancialDetails.PaymentFrequency");
 };
 
 /**
@@ -250,7 +215,7 @@ Model.prototype.getPaymentFrequency = function() {
  * @returns {string}
  */
 Model.prototype.setPaymentFrequency = function(paymentFrequency) {
-  this.set('FinancialDetails.PaymentFrequency', paymentFrequency);
+  this.set("FinancialDetails.PaymentFrequency", paymentFrequency);
   return this;
 };
 
@@ -291,7 +256,7 @@ Model.prototype.isSingleParentFamily = function() {
  * @returns {string}
  */
 Model.prototype.getExcess = function() {
-  return this.get('ProductSelection.Hospital.Excess');
+  return this.get("ProductSelection.Hospital.Excess");
 };
 
 /**
@@ -299,7 +264,7 @@ Model.prototype.getExcess = function() {
  * @returns {string}
  */
 Model.prototype.setExcess = function(excess) {
-  this.set('ProductSelection.Hospital.Excess', Number(excess));
+  this.set("ProductSelection.Hospital.Excess", Number(excess));
   return this;
 };
 
@@ -308,7 +273,7 @@ Model.prototype.setExcess = function(excess) {
  * @returns {String}
  */
 Model.prototype.getPolicyHolderFirstName = function() {
-  return this.get('PersonalDetails.PolicyHolder.FirstName');
+  return this.get("PersonalDetails.PolicyHolder.FirstName");
 };
 
 /**
@@ -316,7 +281,7 @@ Model.prototype.getPolicyHolderFirstName = function() {
  * @returns {String}
  */
 Model.prototype.getPolicyHolderLastName = function() {
-  return this.get('PersonalDetails.PolicyHolder.FirstName');
+  return this.get("PersonalDetails.PolicyHolder.FirstName");
 };
 
 /**
@@ -324,7 +289,7 @@ Model.prototype.getPolicyHolderLastName = function() {
  * @returns {String}
  */
 Model.prototype.getPolicyHolderEmail = function() {
-  return this.get('PersonalDetails.PolicyHolder.Email');
+  return this.get("PersonalDetails.PolicyHolder.Email");
 };
 
 /**
@@ -333,10 +298,10 @@ Model.prototype.getPolicyHolderEmail = function() {
  * @returns {Number|null}
  */
 Model.prototype.getPolicyHolderAge = function(unit) {
-  var dateOfBirth = this.get('PersonalDetails.PolicyHolder.DateOfBirth');
+  var dateOfBirth = this.get("PersonalDetails.PolicyHolder.DateOfBirth");
   if (dateOfBirth) {
-    var dob = moment(dateOfBirth, 'YYYY-MM-DD', true);
-    return Math.floor(moment().diff(dob, unit || 'years', true));
+    var dob = moment(dateOfBirth, "YYYY-MM-DD", true);
+    return Math.floor(moment().diff(dob, unit || "years", true));
   }
 };
 
@@ -345,9 +310,9 @@ Model.prototype.getPolicyHolderAge = function(unit) {
  * @returns {Model}
  */
 Model.prototype.defaultPolicyHolderGender = function() {
-  var newTitle  = this.get('PersonalDetails.PolicyHolder.Title');
-  var oldGender = this.get('PersonalDetails.PolicyHolder.Gender');
-  this.set('PersonalDetails.PolicyHolder.Gender', Model.getGenderFromTitle(newTitle) || oldGender);
+  var newTitle = this.get("PersonalDetails.PolicyHolder.Title");
+  var oldGender = this.get("PersonalDetails.PolicyHolder.Gender");
+  this.set("PersonalDetails.PolicyHolder.Gender", Model.getGenderFromTitle(newTitle) || oldGender);
   return this;
 };
 
@@ -357,10 +322,10 @@ Model.prototype.defaultPolicyHolderGender = function() {
  * @returns {Number}
  */
 Model.prototype.getPartnerAge = function(unit) {
-  var partnerDateOfBirth = this.get('PersonalDetails.Partner.DateOfBirth');
+  var partnerDateOfBirth = this.get("PersonalDetails.Partner.DateOfBirth");
   if (partnerDateOfBirth) {
-    var dob = moment(partnerDateOfBirth, 'YYYY-MM-DD', true);
-    return Math.floor(moment().diff(dob, unit || 'years', true));
+    var dob = moment(partnerDateOfBirth, "YYYY-MM-DD", true);
+    return Math.floor(moment().diff(dob, unit || "years", true));
   }
 };
 
@@ -369,9 +334,9 @@ Model.prototype.getPartnerAge = function(unit) {
  * @returns {Model}
  */
 Model.prototype.defaultPartnerHolderGender = function() {
-  var newTitle  = this.get('PersonalDetails.Partner.Title');
-  var oldGender = this.get('PersonalDetails.Partner.Gender');
-  this.set('PersonalDetails.Partner.Gender', Model.getGenderFromTitle(newTitle) || oldGender);
+  var newTitle = this.get("PersonalDetails.Partner.Title");
+  var oldGender = this.get("PersonalDetails.Partner.Gender");
+  this.set("PersonalDetails.Partner.Gender", Model.getGenderFromTitle(newTitle) || oldGender);
   return this;
 };
 
@@ -380,7 +345,7 @@ Model.prototype.defaultPartnerHolderGender = function() {
  * @returns   {boolean}
  */
 Model.prototype.isHospitalProductSelected = function() {
-  return (this.getHospitalProductCode() && this.getHospitalProductCode() !== Model.HOSPITAL_NONE);
+  return this.getHospitalProductCode() && this.getHospitalProductCode() !== Model.HOSPITAL_NONE;
 };
 
 /**
@@ -388,7 +353,7 @@ Model.prototype.isHospitalProductSelected = function() {
  * @returns {String}
  */
 Model.prototype.getHospitalProductCode = function() {
-  return this.get('ProductSelection.Hospital.Code');
+  return this.get("ProductSelection.Hospital.Code");
 };
 
 /**
@@ -398,7 +363,7 @@ Model.prototype.getHospitalProductCode = function() {
  */
 Model.prototype.setHospitalProductCode = function(code) {
   //set the code
-  this.set('ProductSelection.Hospital.Code', code);
+  this.set("ProductSelection.Hospital.Code", code);
   return this;
 };
 
@@ -407,7 +372,7 @@ Model.prototype.setHospitalProductCode = function(code) {
  * @returns {Model}
  */
 Model.prototype.isExtrasProductSelected = function() {
-  return this.get('ProductSelection.Extras') && this.get('ProductSelection.Extras.Code') !== Model.EXTRAS_NONE;
+  return this.get("ProductSelection.Extras") && this.get("ProductSelection.Extras.Code") !== Model.EXTRAS_NONE;
 };
 
 /**
@@ -415,8 +380,7 @@ Model.prototype.isExtrasProductSelected = function() {
  * @returns {String}
  */
 Model.prototype.getExtrasProductCode = function() {
-
-  var extras = this.get('ProductSelection.Extras');
+  var extras = this.get("ProductSelection.Extras");
 
   for (var key in this.preBundledExtrasProducts) {
     if (this.preBundledExtrasProducts.hasOwnProperty(key)) {
@@ -440,16 +404,16 @@ Model.prototype.setExtrasProductCode = function(code) {
   //set the bundle structure
   if (code === Model.EXTRAS_NONE) {
     extras = {
-      "Code": "None",
-      "BaseBundle": null,
-      "Bundles": []
+      Code: "None",
+      BaseBundle: null,
+      Bundles: []
     };
   } else {
     extras = this.preBundledExtrasProducts[code];
   }
 
   //set the code
-  this.set('ProductSelection.Extras', extras);
+  this.set("ProductSelection.Extras", extras);
   return this;
 };
 
@@ -458,7 +422,7 @@ Model.prototype.setExtrasProductCode = function(code) {
  * @returns   {boolean}
  */
 Model.prototype.isCombinedProductSelected = function() {
-  return (this.getCombinedProductCode() && this.getCombinedProductCode() !== Model.COMBINED_NONE);
+  return this.getCombinedProductCode() && this.getCombinedProductCode() !== Model.COMBINED_NONE;
 };
 
 /**
@@ -466,7 +430,7 @@ Model.prototype.isCombinedProductSelected = function() {
  * @returns {String}
  */
 Model.prototype.getCombinedProductCode = function() {
-  return this.get('ProductSelection.Combined.Code');
+  return this.get("ProductSelection.Combined.Code");
 };
 
 /**
@@ -476,7 +440,7 @@ Model.prototype.getCombinedProductCode = function() {
  */
 Model.prototype.setCombinedProductCode = function(code) {
   //set the code
-  this.set('ProductSelection.Combined.Code', code);
+  this.set("ProductSelection.Combined.Code", code);
   return this;
 };
 
@@ -485,7 +449,7 @@ Model.prototype.setCombinedProductCode = function(code) {
  * @returns   {boolean}
  */
 Model.prototype.hasHospitalComponent = function() {
-  return (this.isHospitalProductSelected() || this.isCombinedProductSelected());
+  return this.isHospitalProductSelected() || this.isCombinedProductSelected();
 };
 
 /**
@@ -493,7 +457,7 @@ Model.prototype.hasHospitalComponent = function() {
  * @returns {Tier}
  */
 Model.prototype.getAGRTier = function() {
-  return this.AGR.getTier(this.get('GovernmentDetails.IncomeTier'));
+  return this.AGR.getTier(this.get("GovernmentDetails.IncomeTier"));
 };
 
 /**
@@ -501,7 +465,7 @@ Model.prototype.getAGRTier = function() {
  * @returns {Boolean}
  */
 Model.prototype.isAGRApplied = function() {
-  return this.get('GovernmentDetails.ApplyGovernmentRebate');
+  return this.get("GovernmentDetails.GovernmentRebateAcknowledgement.RebateIsRequested");
 };
 
 /**
@@ -517,7 +481,7 @@ Model.prototype.getAGRPercentage = function() {
  * @returns {Boolean}
  */
 Model.prototype.isLHCApplied = function() {
-  return (this.LHC.Loading > 0);
+  return this.LHC.Loading > 0;
 };
 
 /**
@@ -533,7 +497,7 @@ Model.prototype.getLHCPercentage = function() {
  * @returns {String}
  */
 Model.prototype.getFrequency = function() {
-  return this.get('FinancialDetails.PaymentFrequency');
+  return this.get("FinancialDetails.PaymentFrequency");
 };
 
 /**
@@ -542,14 +506,13 @@ Model.prototype.getFrequency = function() {
  * @returns {Model}
  */
 Model.prototype.setFrequency = function(frequency) {
-
   //check the code is valid
   if (Model.FREQUENCY.indexOf(frequency) === -1) {
-    throw new Error('Invalid payment frequency "'+frequency+'".');
+    throw new Error('Invalid payment frequency "' + frequency + '".');
   }
 
   //set the code
-  this.set('FinancialDetails.PaymentFrequency', frequency);
+  this.set("FinancialDetails.PaymentFrequency", frequency);
   return this;
 };
 
