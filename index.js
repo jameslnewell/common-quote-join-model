@@ -516,4 +516,21 @@ Model.prototype.setFrequency = function(frequency) {
   return this;
 };
 
+/**
+ * Get the policy excess
+ * @returns {string}
+ */
+Model.prototype.getAgeDiscount = function() {
+  return this.get("QuoteDetails.AgeDiscount");
+};
+
+/**
+ * Set the policy excess
+ * @returns {string}
+ */
+Model.prototype.setAgeDiscount = function(excess) {
+  this.set("QuoteDetails.AgeDiscount", Number(excess));
+  return this;
+};
+
 module.exports = Model;
