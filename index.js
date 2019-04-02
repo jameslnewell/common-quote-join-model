@@ -9,6 +9,7 @@ var AGR = require("aus-gov-rebate");
  * @param   {Object} options
  * @param   {Object} options.agr                The AGR tier data
  * @param   {Object} options.lhc                The LHC data
+ * @param   {Object} options.ageDiscount
  * @param   {Object} [options.attributes]       The initial model data
  * @param   {Object} [options.preBundledExtrasProducts]
  */
@@ -18,6 +19,7 @@ function Model(options) {
 
   this.AGR = AGR(options.agr);
   this.LHC = options.lhc;
+  this.AgeDiscount = options.ageDiscount;
 
   this.set(options.attributes || {}, { silent: true });
 
@@ -521,16 +523,7 @@ Model.prototype.setFrequency = function(frequency) {
  * @returns {string}
  */
 Model.prototype.getAgeDiscount = function() {
-  return this.get("QuoteDetails.AgeDiscount");
-};
-
-/**
- * Set the policy excess
- * @returns {string}
- */
-Model.prototype.setAgeDiscount = function(excess) {
-  this.set("QuoteDetails.AgeDiscount", Number(excess));
-  return this;
+  return this.AgeDiscount;
 };
 
 module.exports = Model;
